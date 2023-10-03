@@ -76,7 +76,7 @@ public class Frota {
     
     /**
      * 
-     * @return 
+     * @return Maior quilometragem média
      */
     public Veiculo maiorKmMedia(){
         double maiormedia = 0;
