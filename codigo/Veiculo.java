@@ -18,8 +18,27 @@ public class Veiculo {
         CONSUMO = 8.2;
     }
 
-	public boolean addRota(Rota rota) {
+	public boolean addRota(Rota rota){
+		boolean adicionada = true;
+		double kmRota = rota.getQuilometragem();
+
 		
+		if(this.quantRotas < MAXROTAS){
+			verificarMes(rota);	
+		}
+	
+		if (kmRota > this.autonomiaMaxima() || this.quantRotas >= MAXROTAS ) {
+			adicionada = false;
+		} 
+		else {
+			if (rota.getQuilometragem() > this.autonomiaAtual()) {
+				this.abastecer(tanque.autonomiaMaxima() - tanque.autonomiaAtual());
+			}
+			this.rotas[quantRotas] = rota;
+			this.quantRotas++;
+			this.percorrerRota(rota);
+		}
+		return adicionada;
 	}
 
 	private double autonomiaMaxima() {
@@ -41,7 +60,7 @@ public class Veiculo {
 			tanqueAtual=tanqueMax;
 			return (tanqueAtual+litros-tanqueMax);
 		}
-		else (tanqueAtual+=litros)
+		else return (tanqueAtual+=litros)
 	}
 
 	public double kmNoMes() {
@@ -53,6 +72,9 @@ public class Veiculo {
 	}
 
 	private void percorrerRota(Rota rota) {
+		double kmRota = rota.getQuilometragem();
+		
+		tanqueAtual-=(kmRota/CONSUMO);
 	
 	}
 
