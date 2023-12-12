@@ -10,34 +10,34 @@ import java.util.Date;
 public class Rota {
     
     private double quilometragem;
-    private Date data;
+    private Data data;
 
+    
+    public Rota(double km, Data data) {
+		this.quilometragem = km;
+		this.data = data;
+	}
     
     /**
      * Gera um relatório simples da rota, incluindo a data e quilometragem.
      *
      * @return String contendo informações da rota.
      */
-    public String Relatorio (){
-    	return("Data da Rota:" +data + "quilometragem:"+quilometragem);
-    }
+    public String relatorio(String placa) {
+		StringBuilder aux = new StringBuilder();
+		aux.append("A rota percorrida do dia ").append(data.dataFormatada()).append(" pelo veículo de placa: ").append(placa)
+		.append(" possui ").append(quilometragem).append(" km"+ "\n");
+		return aux.toString();
+	}
+    
+    
     
     public double getQuilometragem() {
         return quilometragem;
     }
    
-    public Date getData() {
+    public Data getData() {
     	return data;
-    }
-    
-    public int getMes() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(data);
-
-        // Obtém o mês (janeiro é 0, fevereiro é 1, ..., dezembro é 11)
-        int mes = calendar.get(Calendar.MONTH) + 1;
-
-        return mes;
     }
     
     

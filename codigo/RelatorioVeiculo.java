@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class RelatorioVeiculo {
 
-    public static String gerarRelatorioCompleto(Veiculo veiculo) {
+    public String gerarRelatorioCompleto(Veiculo veiculo) {
         StringBuilder relatorio = new StringBuilder();
 
         relatorio.append(":: Relatório Completo ::\n\n");

@@ -18,7 +18,23 @@ public class Veiculo {
 	private Tanque tanque;
 	private double totalReabastecido;
 	private ETipoVeiculo tipoVeiculo;
+	private RelatorioVeiculo relatorio;
 	
+	public String getRelatorioVeiculo() {
+		return relatorio.gerarRelatorioCompleto(this);
+	}
+	/**
+     * Construtor da classe Veiculo.
+     * 
+     * @param placa Placa do veículo.
+     * @param tipoVeiculo Tipo de veículo (enum ETipoVeiculo).
+     */
+    public Veiculo(String placa, ETipoVeiculo tipoVeiculo) {
+        this.placa = placa;
+        this.tipoVeiculo = tipoVeiculo;
+        this.rotas = new Rota[MAX_ROTAS];
+        this.tanque = new Tanque(tipoVeiculo.getTipoCombustivel(), tipoVeiculo.getCapacidadeTanque());
+    }
 	
 	/**
      * Realiza a adição de uma rota ao veículo, verificando se é possível adicioná-la.
@@ -27,27 +43,50 @@ public class Veiculo {
      * @param rota Rota a ser adicionada.
      * @return true se a rota foi adicionada com sucesso, false caso contrário.
      */
-	public boolean addRota(Rota rota){
-		boolean adicionada = true;
-		double kmRota = rota.getQuilometragem();
+	 public boolean addRota(Rota rota) {
+	        boolean adicionada = true;
+	        double kmRota = rota.getQuilometragem();
 
-		
-		if (this.quantRotas < MAX_ROTAS) {
-		        verificarMes(rota.getMes());
-		}
+	        if (this.quantRotas < MAX_ROTAS) {
+	            verificarMes(rota.getData().getMes());
+	        }
+
+	        if (kmRota > this.autonomiaMaxima() || this.quantRotas >= MAX_ROTAS) {
+	            adicionada = false;
+	        } else {
+	            try {
+	                double litrosNecessarios = calcularLitrosNecessariosReabastecimento(rota);
+
+	                if (litrosNecessarios > 0) {
+	                    double litrosAbastecidos = this.abastecerVeiculo(litrosNecessarios);
+	                    System.out.println("Litros abastecidos: " + litrosAbastecidos);
+	                }
+
+	                this.rotas[quantRotas] = rota;
+	                this.quantRotas++;
+	                this.percorrerRota(rota);
+	            } catch (IllegalArgumentException e) {
+	                System.out.println("Erro ao adicionar rota: " + e.getMessage());
+	            }
+	        }
+
+	        return adicionada;
+	    }
+
+	    public double abastecerVeiculo(double litros) throws IllegalArgumentException {
+	        if (tanque == null) {
+	            throw new IllegalArgumentException("Veículo não possui tanque associado.");
+	        }
+
+	        return tanque.abastecer(litros);
+	    }
 	
-		if (kmRota > this.autonomiaMaxima() || this.quantRotas >= MAX_ROTAS ) {
-			adicionada = false;
-		} 
-		else {
-			if (rota.getQuilometragem() > this.autonomiaAtual()) {
-				this.abastecerVeiculo(tanque.autonomiaMaxima() - tanque.autonomiaAtual());
-			}
-			this.rotas[quantRotas] = rota;
-			this.quantRotas++;
-			this.percorrerRota(rota);
-		}
-		return adicionada;
+	public double calcularLitrosNecessariosReabastecimento(Rota rota) {
+		
+	    double quilometrosFaltantes = rota.getQuilometragem() - autonomiaAtual();
+	    double litrosNecessarios = quilometrosFaltantes / tipoVeiculo.getTipoCombustivel().getConsumoMedio();
+	    
+	    return litrosNecessarios;
 	}
 
 	
@@ -69,31 +108,6 @@ public class Veiculo {
 		return (tanque.getCapacidadeAtual()*CONSUMO);
 	}
 
-	/**
-	 * Abastece o veículo com a quantidade especificada de litros.
-	 * Verifica se a quantidade de litros é válida e exibe uma mensagem de erro se for negativa.
-	 * Delega a operação de abastecimento para o método correspondente na classe Tanque.
-	 * Atualiza o total reabastecido e a capacidade atual do tanque com base no resultado do abastecimento.
-	 *
-	 * @param litros Quantidade de litros a ser abastecida no veículo.
-	 * @return A quantidade real de litros abastecidos no veículo, considerando as limitações do tanque.
-	 */
-	
-    public double abastecerVeiculo(double litros) {
-        if (litros < 0) {
-            System.out.println("Digite um valor válido");
-            return 0;
-        }
-
-        // Delega a operação de abastecimento para o tanque
-        double litrosAbastecidos = tanque.abastecer(litros);
-
-        if (litrosAbastecidos > 0) {
-            totalReabastecido += litrosAbastecidos;
-        }
-
-        return litrosAbastecidos;
-    }
 	
 	 /**
      * Calcula a quilometragem total percorrida pelo veículo no mês especificado.
@@ -103,7 +117,7 @@ public class Veiculo {
      */
 	public double kmNoMes(int mes) {
 	    return Arrays.stream(rotas)
-	            .filter(rota -> rota.getMes() == mes)
+	            .filter(rota -> rota.getData().getMes() == mes)
 	            .mapToDouble(Rota::getQuilometragem) // Mapeia para os quilômetros e converte para double
 	            .sum(); // Calcula a soma dos quilômetros no mês
 	}
@@ -164,6 +178,8 @@ public class Veiculo {
 	}
 	
 	
+	
+	
 	 /**
      * Verifica se a rota pertence ao mês atual, exibindo uma mensagem caso contrário.
      * 
@@ -175,7 +191,6 @@ public class Veiculo {
 
         if (mes != mesAtual) {
             System.out.println("Atenção: A rota não pertence ao mês atual.");
-            // Adicione a lógica adicional que deseja executar quando a rota não pertence ao mês atual.
         }
     }
 
