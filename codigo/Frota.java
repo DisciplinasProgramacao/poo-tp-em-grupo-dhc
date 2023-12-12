@@ -16,7 +16,23 @@ public class Frota {
     Veiculo conect = new Veiculo();
     // #endregion
 
-    /**
+    public Veiculo[] getVeiculos() {
+		return veiculos;
+	}
+
+	public void setVeiculos(Veiculo[] veiculos) {
+		this.veiculos = veiculos;
+	}
+
+	public Veiculo getVeiculo() {
+		return veiculo;
+	}
+
+	public void setVeiculo(Veiculo veiculo) {
+		this.veiculo = veiculo;
+	}
+
+	/**
      * Método para a impressão de um relatório contendo as informações solicitadas
      * pela empresa. Se o vetor estiver vazio, informa a falta de elemnetos
      * inseridos
