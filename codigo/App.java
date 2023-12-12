@@ -24,7 +24,7 @@ class App{
             int dia = entrada.nextInt();
             int mes = entrada.nextInt();
             int ano = entrada.nextInt();
-            Data data = new Data(dia, mes, ano);
+            Date data = new Date(dia, mes, ano);
             Rota rota = new Rota(km, data);
             veiculo.addRota(rota);
             break;
