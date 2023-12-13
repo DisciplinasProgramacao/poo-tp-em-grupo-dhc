@@ -15,12 +15,12 @@ public class App {
       	Rota rota1 = new Rota(100.0, new Data(1, 1, 2023));
       	Rota rota2 = new Rota(750.0, new Data(5, 1, 2023));
       	Rota rota3 = new Rota(200.0, new Data(10, 1, 2023));
-      	Rota rota4 = new Rota(120.0, new Data(10, 2, 2023));
-      	Rota rota5 = new Rota(120.0, new Data(15, 2, 2023));
-      	Rota rota6 = new Rota(120.0, new Data(15, 2, 2023));
-      	Rota rota7 = new Rota(120.0, new Data(15, 2, 2023));
-      	Rota rota8 = new Rota(120.0, new Data(15, 2, 2023));
-      	Rota rota9 = new Rota(120.0, new Data(15, 2, 2023));
+      	Rota rota4 = new Rota(200.0, new Data(10, 2, 2023));
+      	Rota rota5 = new Rota(900.0, new Data(15, 2, 2023));
+      	Rota rota6 = new Rota(900.0, new Data(15, 2, 2023));
+      	Rota rota7 = new Rota(900.0, new Data(15, 2, 2023));
+      	Rota rota8 = new Rota(900.0, new Data(15, 2, 2023));
+      	Rota rota9 = new Rota(900.0, new Data(15, 2, 2023));
       	
       	
       	
@@ -52,8 +52,6 @@ public class App {
         frota.adicionarVeiculo(FURGAOZAO);
         frota.adicionarVeiculo(VANDOSCOOBY);
         frota.adicionarVeiculo(OPALA);
-        
-        frota.relatorioFrota();
 
         //private static Frota criarFrotaInicial() {
 //          Frota frota = new Frota(10);

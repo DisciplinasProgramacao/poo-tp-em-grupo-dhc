@@ -57,7 +57,7 @@ public class Tanque {
      * Realiza o abastecimento do tanque com uma quantidade específica de litros.
      *
      * @param litros Quantidade de litros a ser abastecida.
-     * @return A quantidade real de litros abastecidos, considerando a capacidade disponível.
+     * @return O preço gasto pelo reabastecimento feito.
      */
     public double abastecer(double litros) throws IllegalArgumentException {
         if (litros < 0) {

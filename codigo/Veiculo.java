@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class Veiculo {
 
-	private final int MAX_ROTAS = 30;
+	private final int MAX_ROTAS = 4;
 	private String placa;
 	private Rota [] rotas;
 	private int quantRotas;
@@ -46,37 +46,43 @@ public class Veiculo {
      * @return true se a rota foi adicionada com sucesso, false caso contrário.
      */
     public boolean addRota(Rota rota) {
-        boolean adicionada = true;
-        double kmRota = rota.getQuilometragem();
-
-        if (this.quantRotas < MAX_ROTAS) {
-            verificarMes(rota.getData().getMes());
-        }
-
-        if (kmRota > this.tanque.autonomiaMaxima() || this.quantRotas >= MAX_ROTAS) {
-            adicionada = false;
-            
-        } else {
+        if (podeAdicionarRota(rota)) {
             try {
-            	
-                double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota);
-
-                if (litrosNecessarios > 0) {
-                    this.abastecerVeiculo(litrosNecessarios);
-                }
-
-                this.rotas[quantRotas] = rota;
-                this.quantRotas++;
-                
-                this.percorrerRota(rota);
+                realizarAdicaoRota(rota);
+                return true;
             } catch (IllegalArgumentException e) {
                 System.out.println("Erro ao adicionar rota: " + e.getMessage());
             }
         }
-
-        return adicionada;
+        System.out.println("Não foi possível adicionar: \n"+rota.relatorio(getPlaca()) + "Verifique as condições.\n");
+        return false;
     }
 
+    private boolean podeAdicionarRota(Rota rota) {
+        double kmRota = rota.getQuilometragem();
+
+        if (this.quantRotas >= MAX_ROTAS || kmRota > this.tanque.autonomiaMaxima()) {
+            return false;
+        }
+
+        verificarMes(rota.getData().getMes());
+
+        return true;
+    }
+
+    private void realizarAdicaoRota(Rota rota) {
+        double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota);
+
+        if (litrosNecessarios > 0) {
+            this.abastecerVeiculo(litrosNecessarios);
+        }
+
+        this.rotas[quantRotas] = rota;
+        this.quantRotas++;
+
+        this.percorrerRota(rota);
+    }
+    
     public void abastecerVeiculo(double litros) {
 		this.totalReabastecido += litros;
 		tanque.abastecer(litros);
