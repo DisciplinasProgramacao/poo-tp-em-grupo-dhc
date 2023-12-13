@@ -1,6 +1,9 @@
 package codigo;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Objects;
 
 public class GeradorRelatorio {
 
@@ -19,7 +22,8 @@ public class GeradorRelatorio {
         if (veiculo.getQuantRotas() > 0) {
             relatorio.append(":: Rotas ::\n");
             relatorio.append(Arrays.stream(veiculo.getRotas())
-                    .map(rota -> "Data da Rota: " + rota.getData() + ", Quilometragem: " + rota.getQuilometragem())
+                    .filter(Objects::nonNull) // Filtra rotas não nulas
+                    .map(rota -> "Data da Rota: " + rota.getData().dataFormatada() + ", Quilometragem: " + rota.getQuilometragem())
                     .reduce((s1, s2) -> s1 + "\n" + s2)
                     .orElse("Sem rotas registradas"))
                     .append("\n");
@@ -28,30 +32,24 @@ public class GeradorRelatorio {
         }
 
         relatorio.append(":: Despesa Total Estimada ::\n");
-        double despesaCombustivel = (veiculo.kmTotal() / veiculo.getTipoVeiculo().getTipoCombustivel().getConsumoMedio()) *
-                veiculo.getTipoVeiculo().getTipoCombustivel().getPrecoMedioCombustivel();
+        
+//        // Adiciona verificação para evitar NPE ao acessar rota que pode ser null
+//        double despesaCombustivel = veiculo.getRotas() != null
+//                ? Arrays.stream(veiculo.getRotas())
+//                    .filter(Objects::nonNull)
+//                    .mapToDouble(rota -> veiculo.calcularLitrosNecessariosReabastecimento(rota))
+//                    .sum()
+//                : 0.0;
+
+        
+        NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        
         double despesaManutencao = 0.0; // Adicione lógica para calcular a despesa de manutenção
-        double despesaTotal = despesaCombustivel + despesaManutencao;
-        relatorio.append("Despesa de Combustível: R$ ").append(despesaCombustivel).append("\n");
-        relatorio.append("Despesa de Manutenção: R$ ").append(despesaManutencao).append("\n");
-        relatorio.append("Despesa Total: R$ ").append(despesaTotal).append("\n");
-
+        double despesaTotal = veiculo.totalGasto() + despesaManutencao;
+        relatorio.append("Despesa de Combustível: ").append(formatoMoeda.format(veiculo.totalGasto())).append("\n");
+        relatorio.append("Despesa de Manutenção: ").append(formatoMoeda.format(despesaManutencao)).append("\n");
+        relatorio.append("Despesa Total: ").append(formatoMoeda.format(despesaTotal)).append("\n");
         return relatorio.toString();
     }
-
-    public static String gerarRelatorioFrota(Frota frota) {
-        StringBuilder relatorio = new StringBuilder();
-        if (frota.getVeiculos() != null && frota.getVeiculos().length > 0) {
-            relatorio.append(":: Relatório da Frota ::\n\n");
-            for (Veiculo veiculo : frota.getVeiculos()) {
-                relatorio.append("Placa:: ").append(veiculo.getPlaca()).append("Litros reabastecidos:: ")
-                        .append(veiculo.getTotalReabastecido()).append("\nQuilometragem rodada do mês atual:: ")
-                        .append(veiculo.kmNoMes(Calendar.MONTH)).append("\nQuilometragem total do veículo:: ")
-                        .append(veiculo.kmTotal()).append("\n\n");
-            }
-        } else {
-            relatorio.append("Sem veículos adicionados até o momento");
-        }
-        return relatorio.toString();
-    }
+    
 }
