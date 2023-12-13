@@ -11,14 +11,14 @@ import java.util.*;
 public class Veiculo {
 
 	private final int MAX_ROTAS = 30;
-	private final double CONSUMO = 8.2;
 	private String placa;
 	private Rota [] rotas;
 	private int quantRotas;
 	private Tanque tanque;
-	private double totalReabastecido;
 	private ETipoVeiculo tipoVeiculo;
 	private RelatorioVeiculo relatorio;
+	private double totalReabastecido;
+	
 	
 	public String getRelatorioVeiculo() {
 		return relatorio.gerarRelatorioCompleto(this);
@@ -34,6 +34,8 @@ public class Veiculo {
         this.tipoVeiculo = tipoVeiculo;
         this.rotas = new Rota[MAX_ROTAS];
         this.tanque = new Tanque(tipoVeiculo.getTipoCombustivel(), tipoVeiculo.getCapacidadeTanque());
+		this.quantRotas = 0;
+		this.relatorio = new RelatorioVeiculo();
     }
 	
 	/**
@@ -43,71 +45,54 @@ public class Veiculo {
      * @param rota Rota a ser adicionada.
      * @return true se a rota foi adicionada com sucesso, false caso contrário.
      */
-	 public boolean addRota(Rota rota) {
-	        boolean adicionada = true;
-	        double kmRota = rota.getQuilometragem();
+    public boolean addRota(Rota rota) {
+        boolean adicionada = true;
+        double kmRota = rota.getQuilometragem();
 
-	        if (this.quantRotas < MAX_ROTAS) {
-	            verificarMes(rota.getData().getMes());
-	        }
+        if (this.quantRotas < MAX_ROTAS) {
+            verificarMes(rota.getData().getMes());
+        }
 
-	        if (kmRota > this.autonomiaMaxima() || this.quantRotas >= MAX_ROTAS) {
-	            adicionada = false;
-	        } else {
-	            try {
-	                double litrosNecessarios = calcularLitrosNecessariosReabastecimento(rota);
+        if (kmRota > this.tanque.autonomiaMaxima() || this.quantRotas >= MAX_ROTAS) {
+            adicionada = false;
+            
+        } else {
+            try {
+            	
+                double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota);
 
-	                if (litrosNecessarios > 0) {
-	                    double litrosAbastecidos = this.abastecerVeiculo(litrosNecessarios);
-	                    System.out.println("Litros abastecidos: " + litrosAbastecidos);
-	                }
+                if (litrosNecessarios > 0) {
+                    this.abastecerVeiculo(litrosNecessarios);
+                }
 
-	                this.rotas[quantRotas] = rota;
-	                this.quantRotas++;
-	                this.percorrerRota(rota);
-	            } catch (IllegalArgumentException e) {
-	                System.out.println("Erro ao adicionar rota: " + e.getMessage());
-	            }
-	        }
+                this.rotas[quantRotas] = rota;
+                this.quantRotas++;
+                
+                this.percorrerRota(rota);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Erro ao adicionar rota: " + e.getMessage());
+            }
+        }
 
-	        return adicionada;
-	    }
+        return adicionada;
+    }
 
-	    public double abastecerVeiculo(double litros) throws IllegalArgumentException {
-	        if (tanque == null) {
-	            throw new IllegalArgumentException("Veículo não possui tanque associado.");
-	        }
-
-	        return tanque.abastecer(litros);
-	    }
+    public void abastecerVeiculo(double litros) {
+		this.totalReabastecido += litros;
+		tanque.abastecer(litros);
+	}
+    
+    public double totalGasto() {
+    	return totalReabastecido*(tanque.getCombustivel().getPrecoMedioCombustivel());
+    }
 	
 	public double calcularLitrosNecessariosReabastecimento(Rota rota) {
 		
-	    double quilometrosFaltantes = rota.getQuilometragem() - autonomiaAtual();
+	    double quilometrosFaltantes = rota.getQuilometragem() - tanque.autonomiaAtual();
 	    double litrosNecessarios = quilometrosFaltantes / tipoVeiculo.getTipoCombustivel().getConsumoMedio();
 	    
 	    return litrosNecessarios;
 	}
-
-	
-	 /**
-     * Calcula a autonomia máxima do veículo com base no tanque e no consumo médio.
-     *
-     * @return Autonomia máxima do veículo.
-     */
-	private double autonomiaMaxima() {
-		return (tanque.getCapacidadeMaxima()*CONSUMO);
-	}
-	
-	/**
-     * Calcula a autonomia atual do veículo com base no tanque e no consumo médio.
-     *
-     * @return Autonomia atual do veículo.
-     */
-	private double autonomiaAtual() {
-		return (tanque.getCapacidadeAtual()*CONSUMO);
-	}
-
 	
 	 /**
      * Calcula a quilometragem total percorrida pelo veículo no mês especificado.
@@ -139,18 +124,7 @@ public class Veiculo {
      * @param rota Rota a ser percorrida.
      */
 	private void percorrerRota(Rota rota) {
-		tanque.setCapacidadeAtual(calcularConsumo(rota));
-	}
-	
-	/**
-     * Calcula o consumo de combustível para percorrer a rota especificada.
-     *
-     * @param rota Rota a ser percorrida.
-     * @return Consumo de combustível.
-     */
-	private double calcularConsumo(Rota rota) {
-		
-		return tanque.getCapacidadeAtual()-(rota.getQuilometragem() / CONSUMO);
+		tanque.setCapacidadeAtual(tanque.calcularConsumo(rota));
 	}
 	
 	public String getPlaca() {
@@ -164,10 +138,6 @@ public class Veiculo {
 	public Rota[] getRotas() {
 		return rotas;
 	}
-
-	public double getTotalReabastecido() {
-		return totalReabastecido;
-	}
 	
 	public ETipoVeiculo getTipoVeiculo() {
 		return tipoVeiculo;
@@ -177,7 +147,9 @@ public class Veiculo {
 		return tanque;
 	}
 	
-	
+	public double getTotalReabastecido() {
+		return totalReabastecido;
+	}
 	
 	
 	 /**
@@ -189,9 +161,6 @@ public class Veiculo {
         Calendar calendario = Calendar.getInstance();
         int mesAtual = calendario.get(Calendar.MONTH) + 1; // +1 porque os meses em Calendar começam de 0 (janeiro) a 11 (dezembro)
 
-        if (mes != mesAtual) {
-            System.out.println("Atenção: A rota não pertence ao mês atual.");
-        }
     }
 
 }

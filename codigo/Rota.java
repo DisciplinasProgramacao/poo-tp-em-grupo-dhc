@@ -30,8 +30,6 @@ public class Rota {
 		return aux.toString();
 	}
     
-    
-    
     public double getQuilometragem() {
         return quilometragem;
     }

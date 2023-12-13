@@ -1,67 +1,93 @@
 package codigo;
-import java.util.*;
-class App{
-    public static void Menu(int op){
-      Scanner entrada = new Scanner (System.in);
-      while (op != 0){
-        switch (op){
-          case 1:
-            Frota frota1 = new Frota();
-            System.out.println(frota1.relatorioFrota());
-            break;
-            
-          case 2:
-            System.out.println("Placa:");
-            String placa = entrada.next();
-            frota1.localizarVeiculo(placa);
-            break;
-            
-          case 3: 
-            Veiculo veiculo = new Veiculo();
-            System.out.println("Distância em Km: ");
-            double km = entrada.nextInt();
-            System.out.println("Data (dia/mês/ano): ");
-            int dia = entrada.nextInt();
-            int mes = entrada.nextInt();
-            int ano = entrada.nextInt();
-            Data data = new Data(dia, mes, ano);
-            Rota rota = new Rota(km, data);
-            veiculo.addRota(rota);
-            break;
-            
-          case 4:
-            System.out.println("Quilometragem total percorrida pelo veiculo em km: " + frota.quilometragemtotal());
-            break;
-            
-          case 5:
-            System.out.println("Deseja abastecer quantos litros? ");
-            double litros = entrada.nextDouble();
-            Tanque tanque = new Tanque();
-            tanque.abastecer(litros);
-            break;
-            
-          case 6:
-            Frota fr = new Frota();
-            System.out.println("Maior km média: " + fr.maiorKmMedia() + "km");
-            break;
-          case 7:
-            Frota frota = new Frota();
-            System.out.println("Maior quilometragem total: " + frota.maiorKmTotal() + "km");
-            break;
-            
-          default: 
-            System.out.println("Opção Inválida!!");
-        }
-      }
-    }
-    public static void main(String[] args){
-      Scanner entrada = new Scanner(System.in);
-      
-      System.out.printf("0- Sair!\n1- Relatorio da frota.\n2- Localizar veiculo.\n3- Adicionar rota.\n4- Quilometragem total.\n5- Abastecer.\n6- Maior quilometragem media.\n7- Maior quilometragem total.");
-      int op = entrada.nextInt();
-      
-      Menu(op);
-      
-      entrada.close();
+
+import java.util.Calendar;
+
+public class App {
+    public static void main(String[] args) {
+        // Create vehicles
+    	Veiculo HB20 = new Veiculo("ABC1234", ETipoVeiculo.CARRO);
+    	Veiculo CAMINHAOZAO = new Veiculo("ZXY1234", ETipoVeiculo.CAMINHAO);
+      	Veiculo FURGAOZAO = new Veiculo("BBB9876", ETipoVeiculo.FURGAO);
+      	Veiculo VANDOSCOOBY = new Veiculo("AAA1234", ETipoVeiculo.VAN);
+      	Veiculo OPALA = new Veiculo("XXX9874", ETipoVeiculo.CARRO);
+
+        // Create routes
+      	Rota rota1 = new Rota(100.0, new Data(1, 1, 2023));
+      	Rota rota2 = new Rota(750.0, new Data(5, 1, 2023));
+      	Rota rota3 = new Rota(200.0, new Data(10, 1, 2023));
+      	Rota rota4 = new Rota(120.0, new Data(10, 2, 2023));
+      	Rota rota5 = new Rota(120.0, new Data(15, 2, 2023));
+      	Rota rota6 = new Rota(120.0, new Data(15, 2, 2023));
+      	Rota rota7 = new Rota(120.0, new Data(15, 2, 2023));
+      	Rota rota8 = new Rota(120.0, new Data(15, 2, 2023));
+      	Rota rota9 = new Rota(120.0, new Data(15, 2, 2023));
+      	
+      	
+      	
+      	HB20.abastecerVeiculo(50);
+        // Add routes to vehicles
+      	HB20.addRota(rota1);
+      	CAMINHAOZAO.addRota(rota2);
+      	FURGAOZAO.addRota(rota3);
+      	VANDOSCOOBY.addRota(rota4);
+      	OPALA.addRota(rota5);
+      	
+      	CAMINHAOZAO.addRota(rota3);
+      	CAMINHAOZAO.addRota(rota9);
+      	CAMINHAOZAO.addRota(rota8);
+      	CAMINHAOZAO.addRota(rota7);
+      	CAMINHAOZAO.addRota(rota6);
+
+        // Display reports
+        System.out.println("Relatório do Veículo Carro(HB20:\n" + GeradorRelatorio.gerarRelatorioVeiculo(HB20));
+        System.out.println("\nRelatório do Veículo Caminhao:\n" + GeradorRelatorio.gerarRelatorioVeiculo(CAMINHAOZAO));
+        System.out.println("Relatório do Veículo FURGAO:\n" + GeradorRelatorio.gerarRelatorioVeiculo(FURGAOZAO));
+        System.out.println("Relatório do Veículo VAN:\n" + GeradorRelatorio.gerarRelatorioVeiculo(VANDOSCOOBY));
+        System.out.println("Relatório do Veículo Carro(OPALA):\n" + GeradorRelatorio.gerarRelatorioVeiculo(OPALA));
+        
+        // Create a fleet and add vehicles
+        Frota frota = new Frota(5);
+        frota.adicionarVeiculo(HB20);
+        frota.adicionarVeiculo(CAMINHAOZAO);
+        frota.adicionarVeiculo(FURGAOZAO);
+        frota.adicionarVeiculo(VANDOSCOOBY);
+        frota.adicionarVeiculo(OPALA);
+        
+        frota.relatorioFrota();
+
+        //private static Frota criarFrotaInicial() {
+//          Frota frota = new Frota(10);
+  //
+//          // Criando alguns veículos e adicionando-os à frota
+//          Veiculo veiculo1 = new Veiculo("ABC1234", ETipoVeiculo.CARRO);
+//          Veiculo veiculo2 = new Veiculo("ZXY1234", ETipoVeiculo.CAMINHAO);
+//          Veiculo veiculo3 = new Veiculo("BBB9876", ETipoVeiculo.FURGAO);
+//          Veiculo veiculo4 = new Veiculo("AAA1234", ETipoVeiculo.VAN);
+//          Veiculo veiculo5 = new Veiculo("XXX9874", ETipoVeiculo.CARRO);
+  //
+//          frota.adicionarVeiculo(veiculo1);
+//          frota.adicionarVeiculo(veiculo2);
+//          frota.adicionarVeiculo(veiculo3);
+//          frota.adicionarVeiculo(veiculo4);
+//          frota.adicionarVeiculo(veiculo5);
+  //
+//          // Adicionando algumas rotas aos veículos
+//          Rota rota1 = new Rota(1000.0, new Data(1, 1, 2023));
+//          Rota rota2 = new Rota(750.0, new Data(5, 1, 2023));
+//          Rota rota3 = new Rota(200.0, new Data(10, 1, 2023));
+//          Rota rota4 = new Rota(120.0, new Data(10, 2, 2023));
+//          Rota rota5 = new Rota(120.0, new Data(15, 2, 2023));
+  //
+//          veiculo1.addRota(rota1);
+//          veiculo1.addRota(rota2);
+//          veiculo1.addRota(rota3);
+//          veiculo1.addRota(rota4);
+//          veiculo1.addRota(rota5);
+//          
+//          return frota;
+//      }
+        
+        // Display fleet report
+//        System.out.println("\nRelatório da Frota:\n" + GeradorRelatorio.gerarRelatorioFrota(frota));
     }
 }

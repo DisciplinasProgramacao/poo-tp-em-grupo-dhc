@@ -47,7 +47,12 @@ public class Tanque {
     public void setCapacidadeAtual(double capacidadeAtual) {
         this.capacidadeAtual = capacidadeAtual;
     }
-
+    
+    public double calcularLitrosNecessariosReabastecimento(Rota rota) {
+        double quilometrosFaltantes = rota.getQuilometragem() - autonomiaAtual();
+        return quilometrosFaltantes / combustivel.getConsumoMedio();
+    }
+    
     /**
      * Realiza o abastecimento do tanque com uma quantidade específica de litros.
      *
@@ -65,20 +70,32 @@ public class Tanque {
             throw new IllegalArgumentException(
                     String.format("Não é possível adicionar %.2f litros, tanque cheio.", litros - capacidadeDisponivel));
         }
-
+        
         reabastecidos += litros;
         capacidadeAtual += litros;
-
-        return litros;
+        
+        return calcularPrecoAbastecimento(litros);
     }
 
+    
+    /**
+     * Calcula o consumo de combustível para percorrer a rota especificada.
+     *
+     * @param rota Rota a ser percorrida.
+     * @return Consumo de combustível.
+     */
+	public double calcularConsumo(Rota rota) {
+		
+		return getCapacidadeAtual()-(rota.getQuilometragem() / combustivel.getConsumoMedio() );
+	}
+    
     /**
      * Calcula a autonomia máxima do veículo com base na capacidade atual e no consumo médio.
      *
      * @return A autonomia máxima em quilômetros.
      */
     public double autonomiaMaxima() {
-        return capacidadeAtual * combustivel.getConsumoMedio();
+        return capacidadeMaxima * combustivel.getConsumoMedio();
     }
 
     /**
@@ -88,5 +105,15 @@ public class Tanque {
      */
     public double autonomiaAtual() {
         return capacidadeAtual * combustivel.getConsumoMedio();
+    }
+    
+    /**
+     * Calcula o preço do abastecimento com base na quantidade de litros e no preço médio do combustível.
+     *
+     * @param litros Quantidade de litros a ser abastecida.
+     * @return O preço do abastecimento.
+     */
+    private double calcularPrecoAbastecimento(double litros) {
+        return litros * combustivel.getPrecoMedioCombustivel();
     }
 }
