@@ -1,7 +1,6 @@
 package codigo;
 
 import java.util.Arrays;
-import java.io.*;
 import java.util.*;
 
 /**
@@ -13,6 +12,7 @@ public class Veiculo {
 	private final int MAX_ROTAS = 5;
 	private String placa;
 	private Rota [] rotas;
+	private List<Rota> todasRotas;
 	private int quantRotas;
 	private int quantRotasMes;
 	private Tanque tanque;
@@ -23,7 +23,7 @@ public class Veiculo {
 	
 	
 	public String getRelatorioVeiculo() {
-		return relatorio.gerarRelatorioCompleto(this);
+		return relatorio.gerarRelatorioVeiculo(this);
 	}
 	/**
      * Construtor da classe Veiculo.
@@ -35,10 +35,12 @@ public class Veiculo {
         this.placa = placa;
         this.tipoVeiculo = tipoVeiculo;
         this.rotas = new Rota[MAX_ROTAS];
+        this.todasRotas = new ArrayList<>();
         this.tanque = new Tanque(tipoVeiculo.getTipoCombustivel(), tipoVeiculo.getCapacidadeTanque());
 		this.quantRotas = 0;
 		this.quantRotasMes = 0;
 		this.relatorio = new RelatorioVeiculo();
+		this.mesAtual = -1;
     }
 	
 	/**
@@ -49,14 +51,10 @@ public class Veiculo {
      * @return true se a rota foi adicionada com sucesso, false caso contrário.
      */
     public boolean addRota(Rota rota) {
-        if (podeAdicionarRota(rota)) {
-            try {
-                realizarAdicaoRota(rota);
-                return true;
-            } catch (IllegalArgumentException e) {
-                System.out.println("Erro ao adicionar rota: " + e.getMessage());
-            }
-        }
+    	if (podeAdicionarRota(rota)) {
+    	        realizarAdicaoRota(rota);
+    	        return true;
+    	}
         System.out.println("Não foi possível adicionar: \n"+rota.relatorioRota(getPlaca()) + "Verifique as condições.\n");
         return false;
     }
@@ -82,7 +80,8 @@ public class Veiculo {
             this.abastecerVeiculo(litrosNecessarios);
         }
 
-        this.rotas[quantRotas] = rota;
+        todasRotas.add(rota);
+        this.rotas[quantRotasMes] = rota;
         this.quantRotas++;
         this.quantRotasMes++;
 
@@ -119,8 +118,9 @@ public class Veiculo {
      */
 	public double kmTotal() {
 	    return Arrays.stream(rotas)
-	            .mapToDouble(Rota::getQuilometragem) // Mapeia para os quilômetros e converte para double
-	            .sum(); // Calcula a soma total dos quilômetros percorridos pelo veículo
+	            .filter(Objects::nonNull)
+	            .mapToDouble(Rota::getQuilometragem)
+	            .sum();
 	}
 
 	 /**
@@ -143,6 +143,11 @@ public class Veiculo {
 	public Rota[] getRotas() {
 		return rotas;
 	}
+	
+	
+	public List<Rota> getTodasRotas() {
+        return todasRotas;
+    }
 	
 	public ETipoVeiculo getTipoVeiculo() {
 		return tipoVeiculo;

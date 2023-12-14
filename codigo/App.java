@@ -46,11 +46,11 @@ public class App {
         }
       	
         // Display reports
-        System.out.println("Relatório do Veículo Carro(HB20:\n" + GeradorRelatorio.gerarRelatorioVeiculo(HB20));
-        System.out.println("\nRelatório do Veículo Caminhao:\n" + GeradorRelatorio.gerarRelatorioVeiculo(CAMINHAOZAO));
-        System.out.println("Relatório do Veículo FURGAO:\n" + GeradorRelatorio.gerarRelatorioVeiculo(FURGAOZAO));
-        System.out.println("Relatório do Veículo VAN:\n" + GeradorRelatorio.gerarRelatorioVeiculo(VANDOSCOOBY));
-        System.out.println("Relatório do Veículo Carro(OPALA):\n" + GeradorRelatorio.gerarRelatorioVeiculo(OPALA));
+        System.out.println("Relatório do Veículo Carro(HB20:\n" + HB20.getRelatorioVeiculo());
+        System.out.println("\nRelatório do Veículo Caminhao:\n" + CAMINHAOZAO.getRelatorioVeiculo());
+        System.out.println("Relatório do Veículo FURGAO:\n" + FURGAOZAO.getRelatorioVeiculo());
+        System.out.println("Relatório do Veículo VAN:\n" + VANDOSCOOBY.getRelatorioVeiculo());
+        System.out.println("Relatório do Veículo Carro(OPALA):\n" + OPALA.getRelatorioVeiculo());
         
         // Create a fleet and add vehicles
         Frota frota = new Frota(5);
@@ -60,41 +60,4 @@ public class App {
         frota.adicionarVeiculo(VANDOSCOOBY);
         frota.adicionarVeiculo(OPALA);
 
-        //private static Frota criarFrotaInicial() {
-//          Frota frota = new Frota(10);
-  //
-//          // Criando alguns veículos e adicionando-os à frota
-//          Veiculo veiculo1 = new Veiculo("ABC1234", ETipoVeiculo.CARRO);
-//          Veiculo veiculo2 = new Veiculo("ZXY1234", ETipoVeiculo.CAMINHAO);
-//          Veiculo veiculo3 = new Veiculo("BBB9876", ETipoVeiculo.FURGAO);
-//          Veiculo veiculo4 = new Veiculo("AAA1234", ETipoVeiculo.VAN);
-//          Veiculo veiculo5 = new Veiculo("XXX9874", ETipoVeiculo.CARRO);
-  //
-//          frota.adicionarVeiculo(veiculo1);
-//          frota.adicionarVeiculo(veiculo2);
-//          frota.adicionarVeiculo(veiculo3);
-//          frota.adicionarVeiculo(veiculo4);
-//          frota.adicionarVeiculo(veiculo5);
-  //
-//          // Adicionando algumas rotas aos veículos
-//          Rota rota1 = new Rota(1000.0, new Data(1, 1, 2023));
-//          Rota rota2 = new Rota(750.0, new Data(5, 1, 2023));
-//          Rota rota3 = new Rota(200.0, new Data(10, 1, 2023));
-//          Rota rota4 = new Rota(120.0, new Data(10, 2, 2023));
-//          Rota rota5 = new Rota(120.0, new Data(15, 2, 2023));
-  //
-//          veiculo1.addRota(rota1);
-//          veiculo1.addRota(rota2);
-//          veiculo1.addRota(rota3);
-//          veiculo1.addRota(rota4);
-//          veiculo1.addRota(rota5);
-//          
-//          return frota;
-//      }
-        
-        // Display fleet report
-//        System.out.println("\nRelatório da Frota:\n" + GeradorRelatorio.gerarRelatorioFrota(frota));
-    }
-    
-    
-}
+    }}

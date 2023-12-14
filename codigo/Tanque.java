@@ -67,6 +67,8 @@ public class Tanque {
         double capacidadeDisponivel = capacidadeMaxima - capacidadeAtual;
 
         if (litros > capacidadeDisponivel) {
+        	reabastecidos += capacidadeDisponivel;
+        	capacidadeAtual += capacidadeDisponivel;
             throw new IllegalArgumentException(
                     String.format("Não é possível adicionar %.2f litros, tanque cheio.", litros - capacidadeDisponivel));
         }
