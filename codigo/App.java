@@ -36,8 +36,15 @@ public class App {
       	CAMINHAOZAO.addRota(rota9);
       	CAMINHAOZAO.addRota(rota8);
       	CAMINHAOZAO.addRota(rota7);
-      	CAMINHAOZAO.addRota(rota6);
-
+      	
+      	
+      	System.out.println(CAMINHAOZAO.kmTotal());
+      	try {
+            CAMINHAOZAO.addRota(rota6);
+      	} catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Erro ao adicionar rota: " + e.getMessage());
+        }
+      	
         // Display reports
         System.out.println("Relatório do Veículo Carro(HB20:\n" + GeradorRelatorio.gerarRelatorioVeiculo(HB20));
         System.out.println("\nRelatório do Veículo Caminhao:\n" + GeradorRelatorio.gerarRelatorioVeiculo(CAMINHAOZAO));
@@ -88,4 +95,6 @@ public class App {
         // Display fleet report
 //        System.out.println("\nRelatório da Frota:\n" + GeradorRelatorio.gerarRelatorioFrota(frota));
     }
+    
+    
 }

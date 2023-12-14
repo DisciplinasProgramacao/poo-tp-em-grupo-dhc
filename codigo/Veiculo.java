@@ -10,14 +10,16 @@ import java.util.*;
  */
 public class Veiculo {
 
-	private final int MAX_ROTAS = 4;
+	private final int MAX_ROTAS = 5;
 	private String placa;
 	private Rota [] rotas;
 	private int quantRotas;
+	private int quantRotasMes;
 	private Tanque tanque;
 	private ETipoVeiculo tipoVeiculo;
 	private RelatorioVeiculo relatorio;
 	private double totalReabastecido;
+	private int mesAtual;
 	
 	
 	public String getRelatorioVeiculo() {
@@ -35,6 +37,7 @@ public class Veiculo {
         this.rotas = new Rota[MAX_ROTAS];
         this.tanque = new Tanque(tipoVeiculo.getTipoCombustivel(), tipoVeiculo.getCapacidadeTanque());
 		this.quantRotas = 0;
+		this.quantRotasMes = 0;
 		this.relatorio = new RelatorioVeiculo();
     }
 	
@@ -54,24 +57,26 @@ public class Veiculo {
                 System.out.println("Erro ao adicionar rota: " + e.getMessage());
             }
         }
-        System.out.println("Não foi possível adicionar: \n"+rota.relatorio(getPlaca()) + "Verifique as condições.\n");
+        System.out.println("Não foi possível adicionar: \n"+rota.relatorioRota(getPlaca()) + "Verifique as condições.\n");
         return false;
     }
 
     private boolean podeAdicionarRota(Rota rota) {
         double kmRota = rota.getQuilometragem();
 
-        if (this.quantRotas >= MAX_ROTAS || kmRota > this.tanque.autonomiaMaxima()) {
+        if (verificarMes(rota)) {
+			zerarMes();
+		}
+        
+        if (this.quantRotasMes >= MAX_ROTAS || kmRota > this.tanque.autonomiaMaxima()) {
             return false;
         }
-
-        verificarMes(rota.getData().getMes());
 
         return true;
     }
 
     private void realizarAdicaoRota(Rota rota) {
-        double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota);
+        double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota) ;
 
         if (litrosNecessarios > 0) {
             this.abastecerVeiculo(litrosNecessarios);
@@ -79,6 +84,7 @@ public class Veiculo {
 
         this.rotas[quantRotas] = rota;
         this.quantRotas++;
+        this.quantRotasMes++;
 
         this.percorrerRota(rota);
     }
@@ -92,13 +98,6 @@ public class Veiculo {
     	return totalReabastecido*(tanque.getCombustivel().getPrecoMedioCombustivel());
     }
 	
-	public double calcularLitrosNecessariosReabastecimento(Rota rota) {
-		
-	    double quilometrosFaltantes = rota.getQuilometragem() - tanque.autonomiaAtual();
-	    double litrosNecessarios = quilometrosFaltantes / tipoVeiculo.getTipoCombustivel().getConsumoMedio();
-	    
-	    return litrosNecessarios;
-	}
 	
 	 /**
      * Calcula a quilometragem total percorrida pelo veículo no mês especificado.
@@ -108,7 +107,7 @@ public class Veiculo {
      */
 	public double kmNoMes(int mes) {
 	    return Arrays.stream(rotas)
-	            .filter(rota -> rota.getData().getMes() == mes)
+	            .filter(rota -> rota != null && rota.getData() != null && rota.getData().getMes() == mes)
 	            .mapToDouble(Rota::getQuilometragem) // Mapeia para os quilômetros e converte para double
 	            .sum(); // Calcula a soma dos quilômetros no mês
 	}
@@ -157,16 +156,25 @@ public class Veiculo {
 		return totalReabastecido;
 	}
 	
+	private void zerarMes() {
+		this.quantRotasMes = 0;
+	}
+	
 	
 	 /**
      * Verifica se a rota pertence ao mês atual, exibindo uma mensagem caso contrário.
      * 
      * @param mes Mês a ser verificado (número de 1 a 12).
      */
-	private void verificarMes(int mes) {
-        Calendar calendario = Calendar.getInstance();
-        int mesAtual = calendario.get(Calendar.MONTH) + 1; // +1 porque os meses em Calendar começam de 0 (janeiro) a 11 (dezembro)
+	private boolean verificarMes(Rota rota) {
+		boolean trocouDeMes = false;
 
-    }
+		if (this.mesAtual < rota.getData().getMes()) {
+			this.mesAtual = rota.getData().getMes();
+			trocouDeMes = true;
+		}
+
+		return trocouDeMes;
+	}
 
 }

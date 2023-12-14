@@ -32,12 +32,7 @@ public class RelatorioVeiculo {
         relatorio.append(":: Despesa Total Estimada ::\n");
         
         // Adiciona verificação para evitar NPE ao acessar rota que pode ser null
-        double despesaCombustivel = veiculo.getRotas() != null
-                ? Arrays.stream(veiculo.getRotas())
-                    .filter(Objects::nonNull)
-                    .mapToDouble(rota -> veiculo.calcularLitrosNecessariosReabastecimento(rota))
-                    .sum()
-                : 0.0;
+        double despesaCombustivel = veiculo.getTotalReabastecido() * veiculo.getTanque().getCombustivel().getPrecoMedioCombustivel();
 
         double despesaManutencao = 0.0; // Adicione lógica para calcular a despesa de manutenção
         double despesaTotal = despesaCombustivel + despesaManutencao;
