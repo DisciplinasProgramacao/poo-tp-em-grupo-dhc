@@ -61,13 +61,14 @@ public class App {
         System.out.println("Relatório do Veículo Carro(OPALA):\n" + OPALA.getRelatorioVeiculo());
         
         //Criando uma frota com tamanho 5 e adicionando os veiculos a ela.
-        Frota frota = new Frota(5);
+        try {
+        Frota frota = new Frota(10);
         frota.adicionarVeiculo(HB20);
         frota.adicionarVeiculo(CAMINHAOZAO);
         frota.adicionarVeiculo(FURGAOZAO);
         frota.adicionarVeiculo(VANDOSCOOBY);
         frota.adicionarVeiculo(OPALA);
-        
+      
         //Testando o método de localizarVeiculo da frota
         System.out.println(frota.localizarVeiculo("ABC1234").getRelatorioVeiculo() );
         System.out.println("---------------------------------------------");
@@ -80,7 +81,11 @@ public class App {
         //Imprimindo o maior número de km que um veículo da frota percorreu
         System.out.printf("O veículo que teve maior km de média teve %.2f km", frota.maiorKmTotal());
         System.out.println("---------------------------------------------");
-        //Gerando um relatório das rotas que informa a data da rota, quilometragem e placa de cada veiculo
+        }catch (NullPointerException | NegativeArraySizeException e) {
+            e.getMessage();
+    	}
+        
+      //Gerando um relatório das rotas que informa a data da rota, quilometragem e placa de cada veiculo
         for (Veiculo veiculo : veiculos) {
             System.out.println("\nRelatório de Rotas para o Veículo " + veiculo.getPlaca() + ":");
             for (Rota rota : veiculo.getRotas()) {
