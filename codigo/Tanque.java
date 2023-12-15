@@ -5,11 +5,18 @@ package codigo;
  * armazenando informações sobre consumo, capacidade máxima, capacidade atual e reabastecimentos.
  */
 public class Tanque {
+	// Atributos da classe
     private ECombustivel combustivel;
     private double capacidadeMaxima;
     private double capacidadeAtual;
     private double reabastecidos;
 
+    /**
+     * Construtor da classe Tanque.
+     *
+     * @param combustivel      Tipo de combustível do tanque.
+     * @param capacidadeMaxima Capacidade máxima do tanque em litros.
+     */
     public Tanque(ECombustivel combustivel, double capacidadeMaxima) {
         this.combustivel = combustivel;
         this.capacidadeMaxima = capacidadeMaxima;
@@ -20,35 +27,49 @@ public class Tanque {
         return reabastecidos;
     }
 
-    public void setReabastecidos(double reabastecidos) {
-        this.reabastecidos = reabastecidos;
-    }
-
     public ECombustivel getCombustivel() {
         return combustivel;
     }
-
-    public void setCombustivel(ECombustivel combustivel) {
-        this.combustivel = combustivel;
+    
+    /**
+     * Calcula o preço médio do combustível do tanque.
+     *
+     * @return Preço médio do combustível.
+     */
+    public double calcularPrecoCombustivel() {
+        return combustivel.getPrecoMedioCombustivel();
     }
 
     public double getCapacidadeMaxima() {
         return capacidadeMaxima;
     }
 
-    public void setCapacidadeMaxima(double capacidadeMaxima) {
-        this.capacidadeMaxima = capacidadeMaxima;
-    }
-
     public double getCapacidadeAtual() {
         return capacidadeAtual;
     }
-
-    public void setCapacidadeAtual(double capacidadeAtual) {
-        this.capacidadeAtual = capacidadeAtual;
-    }
     
+    /**
+     * Define a capacidade atual do tanque em litros.
+     *
+     * @param capacidadeAtual Nova capacidade atual do tanque.
+     */
+    public void setCapacidadeAtual(double capacidadeAtual) {
+    	try {
+    		if (capacidadeAtual>=0) {
+    			this.capacidadeAtual = capacidadeAtual;
+    		}}catch (IllegalArgumentException e) {
+    			e.getMessage();
+    		}
+    }
+
+    /**
+     * Calcula a quantidade de litros necessários para reabastecer o tanque e percorrer uma rota específica.
+     *
+     * @param rota Rota a ser percorrida.
+     * @return Quantidade de litros necessários para a rota.
+     */
     public double calcularLitrosNecessariosReabastecimento(Rota rota) {
+    	
         double quilometrosFaltantes = rota.getQuilometragem() - autonomiaAtual();
         return quilometrosFaltantes / combustivel.getConsumoMedio();
     }
@@ -60,23 +81,24 @@ public class Tanque {
      * @return O preço gasto pelo reabastecimento feito.
      */
     public double abastecer(double litros) throws IllegalArgumentException {
-        if (litros < 0) {
-            throw new IllegalArgumentException("O valor de litros deve ser não negativo.");
-        }
+    	try {
+    		if (litros > 0) {
 
-        double capacidadeDisponivel = capacidadeMaxima - capacidadeAtual;
+    			double capacidadeDisponivel = capacidadeMaxima - capacidadeAtual;
 
-        if (litros > capacidadeDisponivel) {
-        	reabastecidos += capacidadeDisponivel;
-        	capacidadeAtual += capacidadeDisponivel;
-            throw new IllegalArgumentException(
-                    String.format("Não é possível adicionar %.2f litros, tanque cheio.", litros - capacidadeDisponivel));
-        }
-        
-        reabastecidos += litros;
-        capacidadeAtual += litros;
-        
-        return calcularPrecoAbastecimento(litros);
+    			if (litros > capacidadeDisponivel) {
+    				reabastecidos+=capacidadeDisponivel;
+    				capacidadeAtual=capacidadeMaxima;
+    			}
+    			else {
+    			reabastecidos += litros;
+    			capacidadeAtual += litros;
+    			}
+    			return calcularPrecoAbastecimento(litros);}}
+    	catch (IllegalArgumentException e) {
+    		e.getMessage();
+    	}
+    	return 0;
     }
 
     

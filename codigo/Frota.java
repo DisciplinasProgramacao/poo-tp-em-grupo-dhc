@@ -7,36 +7,56 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Frota
+ * Classe que representa uma frota de veículos.
+ * Esta classe gerencia um conjunto de veículos, fornecendo métodos para adicionar,
+ * recuperar e gerar relatórios sobre os veículos na frota.
  */
 public class Frota {
 	
-	// #region Atribuos
+	//Atributos da classe
     private int tamanhoFrota;
     private Veiculo veiculos[];
     private Veiculo veiculo;
     
+    
+    /**
+    * Construtor que cria uma frota com um tamanho específico.
+    *
+    * @param tamanhoFrota O tamanho da frota.
+    */
 	public Frota(int tamanhoFrota) {
         this.tamanhoFrota = tamanhoFrota;
         this.veiculos = new Veiculo[tamanhoFrota];
     }
 
+	/**
+     * Obtém o array de veículos na frota.
+     *
+     * @return O array de veículos.
+     */
     public Veiculo[] getVeiculos() {
 		return veiculos;
 	}
-
-	public void setVeiculos(Veiculo[] veiculos) {
-		this.veiculos = veiculos;
-	}
-
+    
+    /**
+     * Obtém um único veículo da frota.
+     *
+     * @return A referência a um único veículo.
+     */
 	public Veiculo getVeiculo() {
 		return veiculo;
 	}
-
-	public void setVeiculo(Veiculo veiculo) {
-		this.veiculo = veiculo;
+	
+	
+	public int getTamanhoFrota() {
+		return this.tamanhoFrota;
 	}
 	
+	 /**
+     * Obtém uma lista de placas dos veículos na frota.
+     *
+     * @return Uma lista de placas dos veículos.
+     */
 	public List<String> getPlacasVeiculo() {
 	    return Arrays.stream(veiculos)
 	            .filter(Objects::nonNull)
@@ -44,13 +64,20 @@ public class Frota {
 	            .collect(Collectors.toList());
 	}
 	
+	/**
+     * Obtém um veículo com base em sua placa.
+     *
+     * @param placa A placa do veículo a ser obtido.
+     * @return O veículo com a placa especificada, ou null se não encontrado.
+     */
 	public Veiculo getVeiculo(String placa) {
 	    return Arrays.stream(veiculos)
 	            .filter(Objects::nonNull)
 	            .filter(v -> v.getPlaca().equalsIgnoreCase(placa))
 	            .findFirst()
 	            .orElse(null);
-	}
+	    }
+	
 	/**
      * Método para a impressão de um relatório contendo as informações solicitadas
      * pela empresa. Se o vetor estiver vazio, informa a falta de elemnetos
@@ -63,10 +90,13 @@ public class Frota {
         if (veiculos != null && veiculos.length > 0) {
             relatorio.append("::Relatório::\n\n");
             for (Veiculo veiculo : veiculos) {
-                relatorio.append("Placa:: ").append(veiculo.getPlaca()).append("Litros reabastecidos:: ")
-                        .append(veiculo.getTotalReabastecido()).append("\nQuilometragem rodada do mês atual:: ")
-                        .append(veiculo.kmNoMes(Calendar.MONTH)).append("\nQuilometragem total do veículo:: ")
-                        .append(veiculo.kmTotal()).append("\n\n");
+            	relatorio.append("Placa: ").append(veiculo.getPlaca()).append("\nLitros reabastecidos: ")
+                .append(String.format("%.2f", veiculo.getTotalReabastecido())).append(" litros\n")
+                .append("Quilometragem rodada do mês atual: ")
+                .append(String.format("%.2f", veiculo.kmNoMes(Calendar.MONTH))).append(" km\n")
+                .append("Quilometragem total do veículo: ")
+                .append(String.format("%.2f", veiculo.kmTotal())).append(" km\n\n");
+
             }
         } else {
             relatorio.append("Sem veículos adicionados até o momento");
@@ -74,6 +104,11 @@ public class Frota {
         return relatorio.toString();
     }
 	
+	/**
+     * Método para gerar um relatório geral da frota, incluindo informações de cada veículo.
+     *
+     * @return Uma string contendo o relatório geral da frota.
+     */
 	 public String relatorioGeralFrota() {
 	        StringBuilder aux = new StringBuilder();
 
@@ -138,12 +173,17 @@ public class Frota {
         for (int i = 0; i < veiculos.length; i++) {
             if (veiculos[i] == null) {
                 veiculos[i] = veiculo;
-                return true; // Veículo adicionado com sucesso
+                return true;
             }
         }
-        return false; // Frota cheia, veículo não adicionado
+        return false;
     }
 
+    /**
+     * Método para gerar um relatório de manutenção da frota.
+     *
+     * @return Uma string contendo o relatório de manutenção da frota.
+     */
     public String relatorioManutencao() {
         StringBuilder relatorio = new StringBuilder();
 

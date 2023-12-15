@@ -9,7 +9,8 @@ import java.util.*;
  */
 public class Veiculo {
 
-	private final int MAX_ROTAS = 5;
+	//Atributos da classe
+	private final int MAX_ROTAS = 40;
 	private String placa;
 	private Rota [] rotas;
 	private List<Rota> todasRotas;
@@ -20,8 +21,12 @@ public class Veiculo {
 	private RelatorioVeiculo relatorio;
 	private double totalReabastecido;
 	private int mesAtual;
+	private int manutencoesFeitas;
+	private Despesas despesas;
+	private Manutencao manutencao;
+	private int trocaPecasFeitas;
 	
-	
+	// Método para obter o relatório do veículo
 	public String getRelatorioVeiculo() {
 		return relatorio.gerarRelatorioVeiculo(this);
 	}
@@ -41,60 +46,131 @@ public class Veiculo {
 		this.quantRotasMes = 0;
 		this.relatorio = new RelatorioVeiculo();
 		this.mesAtual = -1;
+		this.manutencoesFeitas=0;
+		this.trocaPecasFeitas=0;
+		this.despesas = new Despesas(this);
+		this.manutencao = new Manutencao(this);
     }
 	
-	/**
+    /**
      * Realiza a adição de uma rota ao veículo, verificando se é possível adicioná-la.
      * Caso necessário, realiza abastecimento automático.
+     * Antes de percorrer a rota verifica se é necessária manutenção e/ou troca de peças. Caso positivo, acresce uma manutenção e/ou troca de peças.
      *
      * @param rota Rota a ser adicionada.
      * @return true se a rota foi adicionada com sucesso, false caso contrário.
      */
     public boolean addRota(Rota rota) {
-    	if (podeAdicionarRota(rota)) {
-    	        realizarAdicaoRota(rota);
-    	        return true;
+    	try{
+    		if (rota!=null) 
+    		{
+    			if (verificarManutencao()) {
+					manutencoesFeitas++;
+				}
+				if (verificarTrocaPecas()) {
+					trocaPecasFeitas++;
+				}
+				
+    			if (podeAdicionarRota(rota)) {
+    				realizarAdicaoRota(rota);
+    				return true;
+    			}
+    		}
+    	}catch (NullPointerException e) {
+            e.getMessage();
     	}
-        System.out.println("Não foi possível adicionar: \n"+rota.relatorioRota(getPlaca()) + "Verifique as condições.\n");
-        return false;
+    	return false;
     }
 
+    /**
+     * Verifica se é possível adicionar uma rota ao veículo. Caso o mes seja diferente, dados acerca do mês são zerados.
+     * @param rota Rota a ser adicionada.
+     * @return true se a rota pode ser adicionada, false caso contrário.
+     */
     private boolean podeAdicionarRota(Rota rota) {
-        double kmRota = rota.getQuilometragem();
+    	double kmRota = rota.getQuilometragem();
+    	try {
+    		if (kmRota>=0) {
+    			if (verificarMes(rota)) {
+    				zerarMes();
+    			}
 
-        if (verificarMes(rota)) {
-			zerarMes();
-		}
-        
-        if (this.quantRotasMes >= MAX_ROTAS || kmRota > this.tanque.autonomiaMaxima()) {
-            return false;
-        }
+    			if (this.quantRotasMes >= MAX_ROTAS || kmRota > this.tanque.autonomiaMaxima()) {
+    				return false;
+    			}
+    		}}catch (IllegalArgumentException e) {
+    			e.getMessage();
 
-        return true;
+    		}
+    	return true;
     }
 
+    /**
+     * Aciona o método de abastecimento do veiculo caso necessário para percorrer a rota, além de incluir a rota em seus respectivos conjuntos e atualizar a quantidade de rota.
+     * Por final aciona o método que percorre a Rota.
+     * @param rota Rota a ser adicionada.
+     */
     private void realizarAdicaoRota(Rota rota) {
-        double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota) ;
+    	double litrosNecessarios = tanque.calcularLitrosNecessariosReabastecimento(rota) ;
 
-        if (litrosNecessarios > 0) {
-            this.abastecerVeiculo(litrosNecessarios);
-        }
+    	try {
+    		if (litrosNecessarios > 0) {
+    			this.abastecerVeiculo(litrosNecessarios);
+    		}
 
-        todasRotas.add(rota);
-        this.rotas[quantRotasMes] = rota;
-        this.quantRotas++;
-        this.quantRotasMes++;
+    		todasRotas.add(rota);
+    		this.rotas[quantRotasMes] = rota;
+    		this.quantRotas++;
+    		this.quantRotasMes++;
 
-        this.percorrerRota(rota);
+    		this.percorrerRota(rota);
+    	}
+    	catch (IllegalArgumentException e) {
+    		e.getMessage();
+    	}
     }
     
+    /**
+     * Abastece o veículo com a quantidade de litros especificada.
+     * Atualiza o total reabastecido e o estado do tanque.
+     *
+     * @param litros Quantidade de litros a ser abastecida.
+     */
     public void abastecerVeiculo(double litros) {
-		this.totalReabastecido += litros;
-		tanque.abastecer(litros);
+    	try {
+    		if(litros>0) {
+    			tanque.abastecer(litros);
+    		}}
+    	catch (IllegalArgumentException e) {
+    		e.getMessage();
+    	}
 	}
     
-    public double totalGasto() {
-    	return totalReabastecido*(tanque.getCombustivel().getPrecoMedioCombustivel());
+    /**
+     * Calcula o total gasto com manutenções no veículo.
+     *
+     * @return Total gasto com manutenções.
+     */
+    public double totalGastoManutencao() {
+    	return manutencoesFeitas*(manutencao.precoManutencao(tipoVeiculo));
+    }
+    
+    /**
+     * Calcula o total gasto com manutenções no veículo.
+     *
+     * @return Total gasto com manutenções.
+     */
+    public double totalGastoTrocaPecas() {
+    	return trocaPecasFeitas*(manutencao.precoTrocaPecas(tipoVeiculo));
+    }
+    
+    /**
+     * Calcula o total gasto com reabastecimento do veículo.
+     *
+     * @return Total gasto com reabastecimento.
+     */
+    public double totalGastoReabastecimento() {
+        return totalReabastecido * tanque.calcularPrecoCombustivel() ;
     }
 	
 	
@@ -158,13 +234,48 @@ public class Veiculo {
 	}
 	
 	public double getTotalReabastecido() {
-		return totalReabastecido;
+		return tanque.getReabastecidos();
 	}
 	
 	private void zerarMes() {
 		this.quantRotasMes = 0;
 	}
 	
+	public int getMesAtual() {
+		return mesAtual;
+	}
+	
+	public int getManutencoesFeitas() {
+		return manutencoesFeitas;
+	}
+	
+	public int getTrocaPecasFeitas() {
+		return trocaPecasFeitas;
+	}
+	
+	
+	/**
+     * Verifica se é necessário realizar uma manutenção no veículo.
+     *
+     * @return true se uma manutenção é necessária, false caso contrário.
+     */
+	public boolean verificarTrocaPecas() {
+        return manutencao.verificarTrocaPecas();
+    }
+	
+	/**
+     * Verifica se é necessário realizar uma manutenção no veículo.
+     *
+     * @return true se uma manutenção é necessária, false caso contrário.
+     */
+	public boolean verificarManutencao() {
+        return manutencao.verificarManutencao();
+        
+    }
+	
+	 public Despesas getDespesas() {
+	        return despesas;
+	    }
 	
 	 /**
      * Verifica se a rota pertence ao mês atual, exibindo uma mensagem caso contrário.
@@ -174,8 +285,8 @@ public class Veiculo {
 	private boolean verificarMes(Rota rota) {
 		boolean trocouDeMes = false;
 
-		if (this.mesAtual < rota.getData().getMes()) {
-			this.mesAtual = rota.getData().getMes();
+		if (this.mesAtual < rota.getMes()) {
+			this.mesAtual = rota.getMes();
 			trocouDeMes = true;
 		}
 
