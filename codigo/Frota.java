@@ -179,18 +179,5 @@ public class Frota {
         return false;
     }
 
-    /**
-     * Método para gerar um relatório de manutenção da frota.
-     *
-     * @return Uma string contendo o relatório de manutenção da frota.
-     */
-    public String relatorioManutencao() {
-        StringBuilder relatorio = new StringBuilder();
-
-
-        return relatorio.toString().trim();
-    }
-    
-    
     
 }

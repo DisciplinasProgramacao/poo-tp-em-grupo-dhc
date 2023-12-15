@@ -70,10 +70,16 @@ public class App {
         
         //Testando o método de localizarVeiculo da frota
         System.out.println(frota.localizarVeiculo("ABC1234").getRelatorioVeiculo() );
-        
+        System.out.println("---------------------------------------------");
         //Gerando um relatório da frota criada que informa litros reabastecidos, quilometragem rodada do mês atual e quilometragem total do veículo
         System.out.println(frota.relatorioFrota());
-        
+        System.out.println("---------------------------------------------");
+        //Imprimindo a maior média de km média dos veiculos da frota
+        System.out.printf("O veículo que teve maior km de média teve %.2f km", frota.maiorKmMedia());
+        System.out.println("---------------------------------------------");
+        //Imprimindo o maior número de km que um veículo da frota percorreu
+        System.out.printf("O veículo que teve maior km de média teve %.2f km", frota.maiorKmTotal());
+        System.out.println("---------------------------------------------");
         //Gerando um relatório das rotas que informa a data da rota, quilometragem e placa de cada veiculo
         for (Veiculo veiculo : veiculos) {
             System.out.println("\nRelatório de Rotas para o Veículo " + veiculo.getPlaca() + ":");

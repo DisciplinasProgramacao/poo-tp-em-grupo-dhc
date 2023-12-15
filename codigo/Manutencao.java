@@ -46,7 +46,8 @@ public class Manutencao {
      * @param tipoVeiculo O tipo de veículo.
      * @return O preço da troca de peças.
      */
-    public double precoTrocaPecas(ETipoVeiculo tipoVeiculo) {
+    public double precoTrocaPecas() {
+    	ETipoVeiculo tipoVeiculo = veiculo.getTipoVeiculo();
         return EKmTrocaPecas.getPreco(tipoVeiculo);
     }
 
@@ -55,7 +56,8 @@ public class Manutencao {
      * @param tipoVeiculo O tipo de veículo.
      * @return O preço da manutenção.
      */
-    public double precoManutencao(ETipoVeiculo tipoVeiculo) {
+    public double precoManutencao() {
+    	ETipoVeiculo tipoVeiculo = veiculo.getTipoVeiculo();
         return EKmManutencao.getPreco(tipoVeiculo);
     }
 

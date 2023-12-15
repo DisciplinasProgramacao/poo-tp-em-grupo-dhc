@@ -10,7 +10,7 @@ import java.util.*;
 public class Veiculo {
 
 	//Atributos da classe
-	private final int MAX_ROTAS = 40;
+	private final int MAX_ROTAS = 30;
 	private String placa;
 	private Rota [] rotas;
 	private List<Rota> todasRotas;
@@ -152,7 +152,7 @@ public class Veiculo {
      * @return Total gasto com manutenções.
      */
     public double totalGastoManutencao() {
-    	return manutencoesFeitas*(manutencao.precoManutencao(tipoVeiculo));
+    	return manutencoesFeitas*(manutencao.precoManutencao());
     }
     
     /**
@@ -161,7 +161,7 @@ public class Veiculo {
      * @return Total gasto com manutenções.
      */
     public double totalGastoTrocaPecas() {
-    	return trocaPecasFeitas*(manutencao.precoTrocaPecas(tipoVeiculo));
+    	return trocaPecasFeitas*(manutencao.precoTrocaPecas());
     }
     
     /**
@@ -170,6 +170,8 @@ public class Veiculo {
      * @return Total gasto com reabastecimento.
      */
     public double totalGastoReabastecimento() {
+    	this.totalReabastecido=tanque.getReabastecidos();
+    	
         return totalReabastecido * tanque.calcularPrecoCombustivel() ;
     }
 	
